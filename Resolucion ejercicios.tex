@@ -1,0 +1,96 @@
+\documentclass[11pt]{article}
+
+\usepackage[spanish,activeacute]{babel}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage[bottom]{footmisc}
+\usepackage[hidelinks]{hyperref}
+
+
+
+\setlength{\parindent}{1.0em}
+\setlength{\parskip}{1.0em}
+\setlength{\emergencystretch}{5.0em}
+\setlength{\belowcaptionskip}{-10pt}
+\counterwithin{figure}{section}
+\titlespacing*{\section}{0em}{3.5em}{1.5em}
+\hypersetup{
+	linktoc=all
+}
+
+
+\title{\Huge Servidores}
+\author{Eugenia Damonte, Ariel Fideleff y Mart\'in Go\~ni}
+\date{}
+
+\newcommand{\imagecaption}[1]{\vspace{-7pt}\caption*{\char91\ref{fig:#1}\char93}}
+\setcounter{tocdepth}{2}
+
+\begin{document}
+	\pagenumbering{gobble}
+	\maketitle
+	\newpage
+	\tableofcontents
+	\newpage
+	\pagenumbering{arabic}
+	
+	
+	\section{puTTY}
+	\subsection{Que es puTTY}
+		\texttt{puTTY} es una serie de herramientas de c'odigo abierto que permite la transferencia de archivos mediante la red, as'i como tambi'en el acceso a una consola serial, entre otras cosas. Cuando se habla de puTTY de manera general en realidad se est'a hablando de una serie de programas o componentes, desarrollados y mantenidos por el programador brit'anico Simon Tatham. Estos son:
+		
+		\begin{itemize}
+			\item \texttt{puTTY} - Aplicaci'on para utilizar Telnet\footnote{Telnet o \texttt{Teletype Network} es un protocolo de red que permite acceder a la terminal de otra m'aquina de manera remota. Es adem'as el nombre del programa que usa el cliente.}, Rlogin\footnote{Rlogin o \texttt{Remote Login} es una aplicaci'on TCP/IP que inicia una sesi'on de terminal remota en el host especificado.} y un cliente SSH\footnote{Un cliente SSH es un programa que permite establecer conexiones seguras a servidores SSH.}, tambi'en permite la conexi'on a puertos seriales.
+			\item \texttt{PSCP} - Cliente que permite realizar \textit{command-line secure file copy}, es decir copiar archivos de manera segura desde un terminal. Puede adem'as hacer transferencias SFTP.
+			\item \texttt{PSFTP} - Cliente que permite utilizar SFTP\footnote{SFTP o \texttt{SSH File Transfer Protocol} es un protocolo seguro de transferencia de archivos, hoy en dia ha reemplazado casi completamente a FTP, su predecesor.} para transferir archivos..
+			\item \texttt{puTTYtel} - Un cliente espec'ifico para Telnet.
+			\item \texttt{Plink} - Una interfaz de consola que permite acceder a el \textit{back end} de puTTY. Normalmente usado para manejar t'uneles SSH\footnote{Un tunel SSH es un m'etodo para transportar informaci'on en la red de manera segura usando una conexi'on SSH encriptada.}.
+			\item \texttt{Pageant} - Un agente de autenticaci'on para puTTY, PSCP y Plink.
+			\item \texttt{puTTYgen} - Una aplicaci'on que permite generar llaves de encripci'on \texttt{RSA}, \texttt{DSA}, \texttt{ECDSA} y \texttt{EdDSA}.
+		\end{itemize}
+		
+		En nuestro caso estamos interesados solamente en \texttt{puTTY} y \texttt{puTTYgen}, dado que son los necesarios para acceder de manera segura a una m'aquina remota usando SSH.
+		
+	
+	\subsection{Configuraci'on inicial}
+		Nuestro objetivo con \texttt{puTTY} era usarlo para poder acceder de manera remota a una m'aquina\footnote{En nuestro caso utilizamos nuestra propia m'aquina virtual con \texttt{Debian 7}.} utilizando el protoclo SSH.
+		
+		
+		Lo primero que hicimos fue crear un puerto por el cual pudi'esemos acceder a la \texttt{VM}, para hacer esto fuimos a la configuraci'on de la misma y en el submenu \texttt{Network} abrimos las opciones avanzadas, seleccionando \texttt{port forwarding}. En el clickeamos el bot'on con el signo mas para crear una nueva regla de redirecci'on de puertos. Le pusimos \texttt{SSH} de nombre, dejando el protocolo en \texttt{TCP}. \texttt{Host IP} y \texttt{Guest IP} los dejamos vac'ios para que se asignen autom'aticamente al momento de uso, dado que las direcciones IP no son est'aticas. Finalmente completamos los campos correspondientes con los puertos. Para el del \texttt{Host}, es decir el de Windows, utilizamos el 5999 dado que es un puerto raro, haciendo poco probable que este ocupado. Para el puerto del \texttt{Guest}, es decir la VM, usamos el 22, el puerto est'andar usado por SSH.
+		
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.65]{Images/Install/port_fowarding.PNG}
+    			\caption{El men'u \texttt{port forwarding} de nuestra m'aquina virtual.}
+    			\label{fig:port_fowarding}
+		\end{figure}
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%Remove whitspace when done, for ease of work.
+\end{document}

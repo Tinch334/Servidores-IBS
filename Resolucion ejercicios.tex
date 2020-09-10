@@ -4,10 +4,11 @@
 \usepackage{titlesec}
 \usepackage{graphicx}
 \usepackage{float}
-\usepackage{subfig}
 \usepackage[bottom]{footmisc}
 \usepackage[hidelinks]{hyperref}
-
+\usepackage{subcaption}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
 
 
 \setlength{\parindent}{1.0em}
@@ -16,6 +17,7 @@
 \setlength{\belowcaptionskip}{-10pt}
 \counterwithin{figure}{section}
 \titlespacing*{\section}{0em}{3.5em}{1.5em}
+\setcounter{tocdepth}{2}
 \hypersetup{
 	linktoc=all
 }
@@ -25,8 +27,20 @@
 \author{Eugenia Damonte, Ariel Fideleff y Mart\'in Go\~ni}
 \date{}
 
+
+\definecolor{light-orange}{RGB}{168,87,0}
+\definecolor{light-blue}{RGB}{64, 76, 201}
+\definecolor{dark-gray}{RGB}{100,100,100}
+\definecolor{light-red}{RGB}{201, 60, 60}
+\definecolor{fuchsia}{RGB}{168,0,168}
+
+
+\newtcolorbox{code-box}{colback=white!75!gray,colframe=white!15!gray,fontupper=\linespread{1.15}\selectfont}
+
+
 \newcommand{\imagecaption}[1]{\vspace{-7pt}\caption*{\char91\ref{fig:#1}\char93}}
-\setcounter{tocdepth}{2}
+\newcommand{\codetext}[2]{\large\texttt{\textcolor{#1}{#2}}}
+
 
 \begin{document}
 	\pagenumbering{gobble}
@@ -54,20 +68,184 @@
 		En nuestro caso estamos interesados solamente en \texttt{puTTY} y \texttt{puTTYgen}, dado que son los necesarios para acceder de manera segura a una m'aquina remota usando SSH.
 		
 	
-	\subsection{Configuraci'on inicial}
-		Nuestro objetivo con \texttt{puTTY} era usarlo para poder acceder de manera remota a una m'aquina\footnote{En nuestro caso utilizamos nuestra propia m'aquina virtual con \texttt{Debian 7}.} utilizando el protoclo SSH.
-		
-		
-		Lo primero que hicimos fue crear un puerto por el cual pudi'esemos acceder a la \texttt{VM}, para hacer esto fuimos a la configuraci'on de la misma y en el submenu \texttt{Network} abrimos las opciones avanzadas, seleccionando \texttt{port forwarding}. En el clickeamos el bot'on con el signo mas para crear una nueva regla de redirecci'on de puertos. Le pusimos \texttt{SSH} de nombre, dejando el protocolo en \texttt{TCP}. \texttt{Host IP} y \texttt{Guest IP} los dejamos vac'ios para que se asignen autom'aticamente al momento de uso, dado que las direcciones IP no son est'aticas. Finalmente completamos los campos correspondientes con los puertos. Para el del \texttt{Host}, es decir el de Windows, utilizamos el 5999 dado que es un puerto raro, haciendo poco probable que este ocupado. Para el puerto del \texttt{Guest}, es decir la VM, usamos el 22, el puerto est'andar usado por SSH.
+	\subsection{Conexi'on inicial}
+		Nuestro objetivo con \texttt{puTTY} era usarlo para poder acceder de manera remota a una m'aquina\footnote{En nuestro caso utilizamos nuestra propia m'aquina virtual con \texttt{Debian 7}.} utilizando el protocolo SSH.
+				
+		Lo primero que hicimos fue crear un puerto por el cual pudi'esemos acceder a la \texttt{VM}, para hacer esto fuimos a la configuraci'on de la misma en \texttt{VirtualBox} y en el men'u \texttt{Network} abrimos las opciones avanzadas, seleccionando \texttt{port forwarding}. En el clickeamos el bot'on con el signo mas para crear una nueva regla de redirecci'on de puertos. Le pusimos \texttt{SSH} de nombre, dejando el protocolo en \texttt{TCP}. \texttt{Host IP} y \texttt{Guest IP} los dejamos vac'ios para que se asignen autom'aticamente al momento de uso, dado que las direcciones IP no son est'aticas. Finalmente completamos los campos correspondientes con los puertos. Para el del \texttt{Host}, es decir el de Windows, utilizamos el 5999 dado que es un puerto raro, haciendo poco probable que este ocupado. Para el puerto del \texttt{Guest}, es decir la VM, usamos el 22, el puerto est'andar usado por SSH.
 		
 		\begin{figure}[H]
     			\centering
-    			\includegraphics[scale=0.65]{Images/Install/port_fowarding.PNG}
-    			\caption{El men'u \texttt{port forwarding} de nuestra m'aquina virtual.}
-    			\label{fig:port_fowarding}
+    			\includegraphics[scale=0.65]{Images/Install/port_forwarding.PNG}
+    			\caption{El men'u de \texttt{port forwarding} de nuestra m'aquina virtual.}
+    			\label{fig:port_forwarding}
 		\end{figure}
+		
+		Una vez configurados los puertos nos dirigimos a la VM para verificar que los servicios SSH estuviesen funcionando de manera correcta. Para hacer esto usamos dos comandos, el primero \texttt{ps ax | grep ``ssh''} busca procesos con la palabra ``ssh'' en la lista de procesos activos. Al ejecutarlo encontr'o dos, indicando que los servicios estaban funcionando. Luego, para estar seguros utilizamos otro comando \texttt{/etc/init.d/ssh status}, al ejecutarlo nos inform'o, de nuevo, que los servicios SSH estaban funcionando correctamente. 
+		
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.8]{Images/Config/SSH_check.PNG}
+    			\caption{Los comandos usados para verificar el funcionamiento de los servicios SSH.}
+    			\label{fig:SSH_check}
+		\end{figure}
+		
+		Sabiendo que los servicios SSH estaban funcionando procedimos a realizar el primer intento de conectarnos de manera remota a la VM. Para hacer esto abrimos \texttt{puTTY}, y en el men'u \texttt{Session} pusimos \texttt{localhost} en \texttt{Host Name} y 5999 en \texttt{Port}. El resto de las opciones las dejamos con sus valores predeterminados. Lo que significan estos valores es dentro de la computadora misma(\texttt{localhost}), conectarse al puerto 5999, que es el que especificamos en la configuraci'on de la VM, usando el protoclo SSH.
+		
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.9]{Images/Connection/first_connection_attempt.PNG}
+    			\caption{La configuraci'on para la primera conexi'on a la VM.}
+    			\label{fig:first_connection_attempt}
+		\end{figure}
+		
+		Habiendo ingresado toda la informaci'on clickeamos el bot'on \texttt{Open} para iniciar la conexi'on con la VM. Al hacerlo apareci'o una consola pidiendo que ingresemos nuestro nombre de usuario, y luego contraseña. Al ingresarlos, se nos concedio acceso, pudiendo usar la consola de \texttt{puTTY} como si fuese la consola de la VM. 
+		
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.9]{Images/Connection/first_connection_console.PNG}
+    			\caption{La primera conexi'on a la VM, hecha usando el protcolo SSH y \texttt{puTTY}.}
+    			\label{fig:first_connection_console}
+		\end{figure}
+		
+	\subsection{Conexi'on usando llaves}
+		Si bien este m'etodo funciona, ser'ia muy peligroso usarlo para un servidor real. Esto es porque cualquiera podria conectarese a el mismo y obtener acceso al terminal de la m'aquina. Para solucionar este problema usamos una opci'on que tiene el protocolo SSH que permite validar conexiones mediante el uso de un par de llaves de encripci'on, una p'ublica y una privada. La p'ublica se encuentra en la VM, y la privada en la computadora desde la cual se realiza la conexi'on, siendo usada por \texttt{puTTY}.
+		
+		Lo primero que hay que hacer para usar la autenticaci'on por llaves es generarlas, para esto usamos el prgrama \texttt{puTTYgen}. Una vez abierto bajo la secci'on \texttt{Actions} clickeamos el bot'on \texttt{Generate} sin cambiar niguna de las opciones. Al terminar guardamos la llave privada como \texttt{id\_rca.ppk} y la p'ublica como \texttt{public\_key}.	
+		
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.9]{Images/Connection/puTTYgen.PNG}
+    			\caption{Configuraci'on de \texttt{puTTYgen} usada para generar las llaves.}
+    			\label{fig:puTTYgen}
+		\end{figure}
+		
+		Una vez generadas las llaves ten'iamos que llevar la p'ublica a la VM, as'i como tambi'en cambiar la configuraci'on de SSH para que solo permitiese conexiones con llaves. Para hacer esto volvimos a conectarnos a la VM usando \texttt{puTTY}. Una vez all'i lo primero que hicimos fue ir al directorio escondido \texttt{.ssh} en nuestro directorio propio. All'i creamos un archivo llamado \texttt{autorized\_keys}, en el copiamos la llave p'ublica generada por \texttt{puTTYgen}. 
+		
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.9]{Images/Connection/public_key.PNG}
+    			\caption{Llave p'ublica copiada a la VM usando la terminal de \texttt{puTTY}.}
+    			\label{fig:public_key}
+		\end{figure}
+		
+		Con la llave p'ublica en la VM era hora de configurar SSH para que solo sea posible la autenticaci'on mediante llaves, no permitiendo usar contrase'nas. Para esto abrimos el archivo \texttt{/etc/ssh/sshd\_config} que es el archivo de configuraci'on de SSH. En el cambiamos cuatro cosas:
+		
+		\begin{itemize}
+			\item Cambiamos \texttt{PubkeyAuthentication} de \texttt{no} a \texttt{yes}.
+			\item Descomentamos \texttt{AuthorizedKeyFile    .ssh/authorized\_keys}.
+			\item Cambiamos \texttt{PasswordAuthentication} de \texttt{yes} a  \texttt{no}.
+			\item Cambiamos \texttt{ChallengeResponseAuthentication} de \texttt{yes} a \texttt{no}.
+		\end{itemize}
+		
+		Para que estos cambios tomen efecto tuvimos que reiniciar los servicios SSH, usando el comando \texttt{sudo /etc/init.d/ssh restart}. Al ejecutarlo nos dijo que los servicios se hab'ian reiniciado correctamente.
+		
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.9]{Images/Connection/ssh_restart.PNG}
+    			\caption{El comando usado para reiniciar los servicios SSH.}
+    			\label{fig:ssh_restart}
+		\end{figure}
+		
+		Para verificar si esto hab'ia funcionado primero era necesario configurar \texttt{puTTY} para utlizar la llave privada. Para hacerlo cerramos la terminal y volvimos a iniciar \texttt{puTTY}. En el men'u \texttt{Session} volvimos a introducir la misma informaci'on que antes. Luego fuimos al men'u \texttt{Data} bajo \texttt{Connection} donde en \texttt{Auto-login username} pusimos el nombre de usuario en la VM. Finalmente fuimos a el submenu \texttt{Auth}, bajo el men'u \texttt{SSH}, que tambi'en esta en \texttt{Connection} y especificamos la ubicaci'on de la llave privada. Para hacer m'as r'apido el conectarse a la VM con \texttt{puTTY} guardamos todas las configuraciones en una sesi'on que llamamos \texttt{Debian 7 2}.
+		
+		\begin{figure}[H]
+			\centering
+			\begin{subfigure}[b]{0.45\linewidth}
+				\includegraphics[scale=0.48]{Images/Connection/putty_data.PNG}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.45\linewidth}
+				\includegraphics[scale=0.48]{Images/Connection/putty_SSH.PNG}
+			\end{subfigure}
+			\caption{Configuraci'on de los men'us \texttt{Data} y \texttt{Auth}.}
+			\label{fig:putty_configs}
+		\end{figure}
+		
+		Cuando terminamos de ingresar toda la informaci'on apreteamos el bot'on \texttt{Open} para conectarnos con la VM. Mientras se establecia la conexi'on apareci'o una ventana de \texttt{puTTY} diciendo que hab'ia ocurrido un error. Este dec'ia \textit{No supported authentication methods available}, que se traduce como ``No hay metodos de autenticaci'on soportados disponibles''. Esto nos parecio extra'no ya que pareci'a que hab'iamos configurado todo correctamente y no hab'ia mucha informaci'on sobre cual era la causa del error.
+		
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.8]{Images/Connection/puTTY_error.PNG}
+    			\caption{El error que nos di'o \texttt{puTTY} al intentar conectarnos.}
+    			\label{fig:puTTY_error}
+		\end{figure}
+		
+		Luego de investigar un poco descubrimos que la causa del error era como hab'iamos ingresado la llave p'ublica. El formato correcto es \texttt{ssh-rsa (llave)}, estando todo en una misma l'inea.
+		
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.5]{Images/Connection/public_key_final.PNG}
+    			\caption{}
+    			\label{fig:public_key_final}
+		\end{figure}
+		
+		Luego de solucionar ese problema intentamos conectarnos nuevamente a la VM, cosa que esta vez fue exitosa. Dado que hab'iamos podido conectarnos a nuestra VM desde \texttt{puTTY} utilizando las llaves de manera exitosa decidimos que ya estabamos listos para seguir con el pr'oximo paso, el servidor con Apache.
+		
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.75]{Images/Connection/final_connection.PNG}
+    			\caption{Nos conectamos de manera exitosa a la VM.}
+    			\label{fig:final_connection}
+		\end{figure}
+		
+	\section{Comandos usados}
+		A continuaci'on se encuentran todos los comandos utilizados en este trabajo, correspondientes a las im'agenes presentadas.
+		
+		\begin{figure}[H]
+			\centering
+			\begin{code-box}
+				\codetext{light-blue}{ps} \codetext{light-orange}{ax} \textbar\/ \codetext{light-blue}{grep} \codetext{light-red}{``ssh''}
+				
+				\codetext{light-blue}{/etc/init.d/ssh} \codetext{light-orange}{status}
+			\end{code-box}
+			\imagecaption{SSH_check}
+		\end{figure}
+		
+		\begin{figure}[H]
+			\centering
+			\begin{code-box}
+				\codetext{dark-gray}{---- BEGIN SSH2 PUBLIC KEY ----\\
+				Comment: ``rsa-key-20200831''\\
+				AAAAB3NzaC1yc2EAAAABJQAAAQEAhkS24rsmFKN63BDW+BpZZVkcl
+				z64xRfa2dPeAdJVp6wJzo23oEizBxKs2/OIOE2/2uQ22sThb1Gi5j
+				rRvZQRFwAtiRPygwlEd0pzcFortg+G9x98iZwYnA317Hh8il1JrNy
+				ZamEsZNzchpAwXYlaXI92jY3ABsC5HGDGNMK3rS63hsgArgpKjCZS
+				5+IftXJLAxjhgSXSS0bbf5bJ3KkBtjghRmKCibm6b/zbBrjVN1ms1
+				HLBbofNbtgPmXjLlMtXB6wWfmz4epySU9lRY4Qqbr/zuW+GrbpdRo
+				8T40xls8S06pqfro8om7jubGoCBO/t2rEGgniaNihUbs3VOQ74TQ==\\
+				---- END SSH2 PUBLIC KEY ----}
+			\end{code-box}
+			\imagecaption{public_key}
+		\end{figure}
+		
+		\begin{figure}[H]
+			\centering
+			\begin{code-box}
+				\codetext{fuchsia}{sudo} \codetext{light-blue}{/etc/init.d/ssh} \codetext{light-orange}{restart}
+			\end{code-box}
+			\imagecaption{ssh_restart}
+		\end{figure}
+		
+		\begin{figure}[H]
+			\centering
+			\begin{code-box}
+				\codetext{dark-gray}{ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAhkS24rsmFKN63BDW+
+				BpZZVkclz64xRfa2dPeAdJVp6wJzo23oEizBxKs2/OIOE2/2uQ22s
+				Thb1Gi5jrRvZQRFwAtiRPygwlEd0pzcFortg+G9x98iZwYnA317Hh
+				8il1JrNyZamEsZNzchpAwXYlaXI92jY3ABsC5HGDGNMK3rS63hsgA
+				rgpKjCZS5+IftXJLAxjhgSXSS0bbf5bJ3KkBtjghRmKCibm6b/zbB
+				rjVN1ms1HLBbofNbtgPmXjLlMtXB6wWfmz4epySU9lRY4Qqbr/zuW
+				+GrbpdRo8T40xls8S06pqfro8om7jubGoCBO/t2rEGgniaNihUbs3
+				VOQ74TQ==}
+			\end{code-box}
+			\imagecaption{public_key_final}
+		\end{figure}
+		
+		
 
 	
+
+
+
 
 
 

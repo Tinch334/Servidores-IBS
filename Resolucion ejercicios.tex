@@ -187,6 +187,87 @@
     			\label{fig:final_connection}
 		\end{figure}
 		
+		%%%
+		
+	\section{Servidor web}
+
+		En esta instancia, decidimos instalar y configurar un servidor web: \texttt{Apache HTTP Server}. Un servidor web es un software que permite que un usuario pueda ver el contenido de una p'agina web. A grandes rasgos, lo que sucede al buscar una direcci'on en el navegador es que este busca en qu'e servidor o host se encuentra guardada la p'agina y le ``pide'' el contenido. El servidor web (que est'a instalado en el host) es el encargado de entreg'arselo.
+
+		Lo primero que hicimos para lograr nuestro objetivo fue instalar Apache. Para eso, usamos el comando \texttt{sudo apt-get install apache2}. Verificamos que el servicio anduviera analizando la salida del comando \texttt{ps ax | grep ``apache''}.
+
+
+		\begin{figure}[H]
+    			\centering
+   			\includegraphics[scale=0.6]{/Images/Apache/fig1}
+   			\caption{\texttt{ps ax | grep ``apache''}}
+    			\label{fig:1}
+		\end{figure}
+
+		Antes de proceder, debimos asegurarnos de no tener un servidor web corriendo en Windows. Si hubi'eramos tenido uno, habr'iamos tenido un problema: os protocolos HTTP usan, por defecto, el puerto TCP 80; si el puerto est'a en uso (si tuvi'eramos otro servidor web), tendr'iamos que redireccionar los puertos y eso llevar'ia m'as trabajo.
+
+		Una forma de asegurarnos de que el puerto 80 est'a libre es correr en el sistema \texttt{telnet localhost 80}. Telnet, como contamos previamente, es un programa que nos permite conectarnos a una computadora remota. La sintaxis de este comando es as'i: \texttt{telnet <servidor>{} <puerto>}. Es decir, al escribir \texttt{telnet localhost 80}, le estamos pidiendo a la computadora que se conecte a su puerto 80. Este paso debe realizarse desde la consola de Windows, no en la m'aquina virtual.
+
+		Algo a resaltar es que es probable que el servicio \texttt{telnet} est'e desactivado en Windows. Para activarlo, simplemente buscamos entre las aplicaciones ``\texttt{Activar o desactivar caracter'isticas de Windows}'' y tildamos el casillero que dice ``\texttt{Telnet Client}''. 
+
+		\begin{figure}[H]
+  			\centering
+    			\includegraphics[scale=0.65]{/Images/Apache/fig3}
+    			\label{fig:3}
+    			\caption{activamos Telnet Client}
+		\end{figure}
+
+		Una vez activada esta función, ejecutamos el comando nombrado anteriormente y, si recibimos un error como ``No se puede abrir la conexi'on al host'', quiere decir que no tenemos un servidor web corriendo en este momento en Windows (m'as especificamente, que no estamos usando el puerto 80) y que podremos continuar sin problemas.
+
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.358]{/Images/Apache/fig__}
+    			\label{fig:__}
+		\end{figure}
+
+		En nuestra m'aquina virtual corremos \texttt{telnet localhost 80} (ahora nos conectamos al puerto 80 de la Virtual Box) y escribimos \texttt{GET / HTTP/1.1}. Presionamos la tecla \texttt{enter} una vez y escribimos \texttt{Host: localhost}. La respuesta deber'ia ser similar a la que se muestra en la imagen \ref{fig:4}.
+
+		\begin{table}[H]
+    			\centering
+    			\begin{tabular}{|l|}
+        			\hline
+        			\texttt{GET / HTTP/1.1} \\
+        			\texttt{Host: localhost} \\\hline
+    			\end{tabular}
+    			\label{tab:my_label}
+		\end{table}
+
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.6]{/Images/Apache/fig4_}
+    			\caption{pedimos al servidor que nos muestre la p'agina ``/'' y le indicamos que nos comunicamos en HTTP/1.1}
+    			\label{fig:4}
+		\end{figure}
+
+		Pero ¿qu'e hace el comando ``\texttt{GET / HTTP/1.1}''? \texttt{GET} le pide al servidor el contenido de la p'agina \texttt{/} (una p'agina que es generada por defecto). El 'ultimo argumento que indicamos, \texttt{HTTP/1.1}, es el protocolo y la versi'on del mismo con los que nos comunicamos como cliente. 
+Debemos recordar que el pedido que hace el navegador debe ser comprendido por el servidor web. Es decir, deben funcionar en el mismo protocolo: \texttt{HTTP}.
+Como primera parte de la respuesta obtuvimos ``\texttt{HTTP/1.1 200 OK}'', que indica que el servidor usa, en este caso, el mismo protocolo que nosotrxs y que nos entiende. La otra parte (no visible en la figura anterior), es el c'odigo \texttt{html} de nuestra p'agina.
+
+		Debemos recordar indicar el \texttt{Host} porque es un requisito de esta versi'on del protocolo y, de lo contrario, obtedr'iamos el error ``\texttt{Bad request}'', el servidor no nos entender'ia. Por otro lado, si escribi'eramos \texttt{GET / HTTP/1.0}, al ser una versi'on m'as vieja, no ser'ia necesario este segundo paso y se entablar'ia la comunicaci'on correctamente, como puede observarse en la figura \ref{fig:5}.
+
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.6]{/Images/Apache/fig5_}
+    			\caption{pedimos al servidor que nos muestre la p'agina ``/'' y le indicamos que nos comunicamos en HTTP/1.0}
+    			\label{fig:5}
+		\end{figure}
+
+		S'olo queda configurar los puertos de nuestra m'aquina virtual para que el servidor sea accesible desde otras m'aquinas. Para eso iremos a la aplicaci'on VirtualBox y crearemos una nueva regla de reenv'io de puertos, como hicimos al principio de este trabajo. En el nombre de la regla, indicamos ``Apache''. La configuramos para que tenga protocolo TCP y que los puertos de anfitr'on e invitado sean ambos el 80. Los IPs quedar'an vac'ios para que se acomoden autom'aticamente.
+
+		\begin{figure}[H]
+    			\centering
+    			\includegraphics[scale=0.65]{/Images/Apache/fig6}
+   			\caption{Caption}
+    			\label{fig:6}
+		\end{figure}
+
+		Por 'ultimo, entrando a un navegador y usando la direcci'on ``http://localhost'' o simplemente ``localhost'' (tanto en Windows como en la m'aquina virtual), podremos verificar que todo est'e andando bien (en la pantalla dir'a inicialmente  ``It works!'', despu'es podremos editarlo).
+
+		
 	\section{Comandos usados}
 		A continuaci'on se encuentran todos los comandos utilizados en este trabajo, correspondientes a las im'agenes presentadas.
 		
@@ -240,11 +321,39 @@
 			\imagecaption{public_key_final}
 		\end{figure}
 		
+		\begin{figure}[H]
+			\centering
+			\begin{code-box}
+				\codetext{fuchsia}{sudo } \codetext{light-blue}{apt-get } \codetext{light-orange}{install } \codetext{dark-gray}{apache2}
+			\end{code-box}
+			\imagecaption{1}
+		\end{figure}
 		
+		\begin{figure}[H]
+			\centering
+			\begin{code-box}
+				\codetext{light-blue}{ps } \codetext{light-orange}{ax } \codetext{dark-gray}{| } \codetext{light-blue}{grep } \codetext{dark-gray}{``apache''}
+			\end{code-box}
+			\imagecaption{1}
+		\end{figure}
 
-	
-
-
+		\begin{figure}[H]
+			\centering
+			\begin{code-box}
+				\codetext{light-blue}{telnet } \codetext{light-orange}{localhost 80}
+			\end{code-box}
+			\imagecaption{__}
+		\end{figure}
+		
+		\begin{figure}[H]
+			\centering
+			\begin{code-box}
+				\codetext{light-blue}{telnet } \codetext{light-orange}{localhost 80}\newline
+				\codetext{light-blue}{GET } \codetext{light-orange}{/ HTTP/1.1}\newline
+				\codetext{light-blue}{Host: } \codetext{dark-gray}{localhost}
+			\end{code-box}
+			\imagecaption{4}
+		\end{figure}
 
 
 

@@ -102,8 +102,9 @@
 		
 		\begin{figure}[H]
     			\centering
-    			\includegraphics[scale=0.9]{Images/Connection/first_connection_console.PNG}
-    			\caption{La primera conexi'on a la VM, hecha usando el protcolo SSH y \texttt{puTTY}.}
+    			\captionsetup{justification=centering}
+    			\includegraphics[width=0.9\linewidth]{Images/Connection/first_connection_console.PNG}
+    			\caption{La primera conexi'on a la VM, hecha usando el protocolo SSH y \texttt{puTTY}.}
     			\label{fig:first_connection_console}
 		\end{figure}
 		
@@ -132,7 +133,7 @@
 		
 		\begin{itemize}
 			\item Cambiamos \texttt{PubkeyAuthentication} de \texttt{no} a \texttt{yes}.
-			\item Descomentamos \texttt{AuthorizedKeyFile    .ssh/authorized\_keys}.
+			\item Descomentamos \texttt{AuthorizedKeyFile \qquad \%h/.ssh/authorized\_keys}.
 			\item Cambiamos \texttt{PasswordAuthentication} de \texttt{yes} a  \texttt{no}.
 			\item Cambiamos \texttt{ChallengeResponseAuthentication} de \texttt{yes} a \texttt{no}.
 		\end{itemize}
@@ -192,6 +193,8 @@
 	\section{Servidor web}
 
 		En esta instancia, decidimos instalar y configurar un servidor web: \texttt{Apache HTTP Server}. Un servidor web es un software que permite que un usuario pueda ver el contenido de una p'agina web. A grandes rasgos, lo que sucede al buscar una direcci'on en el navegador es que este busca en qu'e servidor o host se encuentra guardada la p'agina y le ``pide'' el contenido. El servidor web (que est'a instalado en el host) es el encargado de entreg'arselo.
+		
+		\subsection{Instalando y configurando Apache}
 
 		Lo primero que hicimos para lograr nuestro objetivo fue instalar Apache. Para eso, usamos el comando \texttt{sudo apt-get install apache2}. Verificamos que el servicio anduviera analizando la salida del comando \texttt{ps ax | grep ``apache''}.
 
@@ -259,14 +262,50 @@ Como primera parte de la respuesta obtuvimos ``\texttt{HTTP/1.1 200 OK}'', que i
 		S'olo queda configurar los puertos de nuestra m'aquina virtual para que el servidor sea accesible desde otras m'aquinas. Para eso iremos a la aplicaci'on VirtualBox y crearemos una nueva regla de reenv'io de puertos, como hicimos al principio de este trabajo. En el nombre de la regla, indicamos ``Apache''. La configuramos para que tenga protocolo TCP y que los puertos de anfitr'on e invitado sean ambos el 80. Los IPs quedar'an vac'ios para que se acomoden autom'aticamente.
 
 		\begin{figure}[H]
-    			\centering
+    			\centering \captionsetup{justification=centering}
     			\includegraphics[scale=0.65]{Images/Apache/fig6.png}
-   			\caption{Caption}
+   			\caption{Configuraci'on de reenvío de puertos para poder acceder al servidor de la VM desde el host}
     			\label{fig:6}
 		\end{figure}
 
 		Por 'ultimo, entrando a un navegador y usando la direcci'on ``http://localhost'' o simplemente ``localhost'' (tanto en Windows como en la m'aquina virtual), podremos verificar que todo est'e andando bien (en la pantalla dir'a inicialmente  ``It works!'', despu'es podremos editarlo).
+		
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=.8\linewidth]{Images/Apache/fig7.png}
+		\caption{P'agina por defecto de Apache al entrar a la direcci'on \texttt{localhost}}
+		\label{fig:6}
+	\end{figure}
+		
+	\subsection{Transferencia de archivos y modificaci'on de la p'agina web}
+	
+	Ya que logramos comprobar el correcto funcionamiento de nuestra p'agina web con Apache, iremos un paso m'as all'a y modificaremos la p'agina visualizada en la direcci'on \texttt{localhost}. Adem'as, al fin de probar que ser'iamos capaces de almacenar archivos en nuestro servidor y modificarlos de forma remota, as'icomo tambi'en los contenidos de nuestra p'agina web seg'un sea necesario, haremos uso de otro programa llamado WinSCP, que tambi'en hace uso del protocolo SSH.
+	
+	\subsubsection{Instalando y configurando WinSCP}
+	
+	WinSCP es un programa para Windows de c'odigo libre, que permite principalmente, la transferencia de archivos de forma remota. Soporta distintos protocolos para ello, como \texttt{FTP}, \texttt{SFTP}, entre otros, incluyendo el que nos interesa, \texttt{\em{SCP}}. De sus siglas en ingl'es, \textit{Secure Copy Protocol}, es un protocolo algo obsoleto (es preferible el uso de otros m'etodos m'as modernos) para la transferencia de archivos, basado el protocolo \texttt{SSH}. Por esta raz'on, dado que ya hemos configurado una conexi'on por SSH correctamente, podremos lograr nuestro objetivo sin mayores cambios en la VM.
+	%\footnote{\url{https://winscp.net/eng/download.php}} 
+	% Poner el link estaría bueno, pero ponerlo genera muchos espacios por las imágenes. Si quieren veanlo cómo ponerlo
+	
+	Entonces, descargamos el programa desde la p'agina oficial y lo instalamos. Durante el proceso de instalaci'on probablemente surja un cuadro inform'andonos de la existencia de sesiones guardadas con PuTTY:
+	
+	\begin{figure}[H]
+		\centering	\captionsetup{justification=centering}
+		\subfloat[Sesiones guardadas detectadas]{\includegraphics[width=.475\linewidth]{Images/WinSCP/fig1a}}
+		\hfill
+		\subfloat[Selecci'on de sesiones a importar]{\includegraphics[width=.475\linewidth]{Images/WinSCP/fig1b}} \vspace{7pt}
+		\caption{Importaci'on de sesiones guardadas desde PuTTY}
+	\end{figure}
 
+	El instalador de WinSCP detecta y permite importar sesiones guardadas previamente en PuTTY. Esto nos facilita a'un m'as el proceso de configuraci'on, ya que no es necesario indicar nuevamente el puerto, la direcci'on, o la ruta de la llave privada como tuvimos que hacerlo con PuTTY, pues justamente utilizamos las opciones previamente establecidas en dicha ocasi'on, a lo que aceptamos e importamos la sesi'on relacionada a la conexi'on con la VM.
+	
+	Una vez finalizada la instalaci'on, abrimos el programa en cuesti'on, y al ingresar nos pedir'a los datos de conexi'on, pero tambi'en se encuentra listada la sesi'on antes importada, que utilizamos y procedemos a conectarnos a la VM (obviamente prendida).
+	
+	\begin{figure}[H]
+		\centering \captionsetup{justification=centering}
+		\includegraphics[width=.8\linewidth]{Images/WinSCP/fig2}
+		\caption{Elegimos la sesi'on importada al abrir WinSCP}
+	\end{figure}
 		
 	\section{Comandos usados}
 		A continuaci'on se encuentran todos los comandos utilizados en este trabajo, correspondientes a las im'agenes presentadas.

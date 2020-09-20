@@ -9,7 +9,26 @@
 \usepackage{subcaption}
 \usepackage[most]{tcolorbox}
 \usepackage{xcolor}
+\usepackage{listings}
 
+\lstdefinestyle{HTML}{
+	 backgroundcolor=\color{white}, 
+	 basicstyle=\ttfamily\footnotesize,
+	 keywordstyle=\color{blue}\bfseries,
+	 commentstyle=\color{darkgray}\ttfamily,
+	 ndkeywordstyle=\color{green-html}\bfseries,
+	 stringstyle=\color{string-html},
+	 breakatwhitespace=false,
+	 breaklines=true,
+	 captionpos=b,
+	 keepspaces=true,
+	 numbers=left,
+	 numbersep=5pt,
+	 showspaces=false,
+	 showstringspaces=false,
+	 showtabs=false,
+	 tabsize=2
+}
 
 \setlength{\parindent}{1.0em}
 \setlength{\parskip}{1.0em}
@@ -33,6 +52,8 @@
 \definecolor{dark-gray}{RGB}{100,100,100}
 \definecolor{light-red}{RGB}{201, 60, 60}
 \definecolor{fuchsia}{RGB}{168,0,168}
+\definecolor{string-html}{rgb}{1, 0.5, 0}
+\definecolor{green-html}{rgb}{0, 0.5, 0}
 
 
 \newtcolorbox{code-box}{colback=white!75!gray,colframe=white!15!gray,fontupper=\linespread{1.15}\selectfont}
@@ -283,7 +304,7 @@ Como primera parte de la respuesta obtuvimos ``\texttt{HTTP/1.1 200 OK}'', que i
 	
 	\subsubsection{Instalando y configurando WinSCP}
 	
-	WinSCP es un programa para Windows de c'odigo libre, que permite principalmente, la transferencia de archivos de forma remota. Soporta distintos protocolos para ello, como \texttt{FTP}, \texttt{SFTP}, entre otros, incluyendo el que nos interesa, \texttt{\em{SCP}}. De sus siglas en ingl'es, \textit{Secure Copy Protocol}, es un protocolo algo obsoleto (es preferible el uso de otros m'etodos m'as modernos) para la transferencia de archivos, basado el protocolo \texttt{SSH}. Por esta raz'on, dado que ya hemos configurado una conexi'on por SSH correctamente, podremos lograr nuestro objetivo sin mayores cambios en la VM.
+	WinSCP es un programa para Windows de c'odigo abierto que permite principalmente, la transferencia de archivos de forma remota. Soporta distintos protocolos para ello, como \texttt{FTP}, \texttt{SFTP}, entre otros, incluyendo el que nos interesa, \texttt{\em{SCP}}. De sus siglas en ingl'es, \textit{Secure Copy Protocol}, es un protocolo algo obsoleto (es preferible el uso de otros m'etodos m'as modernos) para la transferencia de archivos, basado el protocolo \texttt{SSH}. Por esta raz'on, dado que ya hemos configurado una conexi'on por SSH correctamente, podremos lograr nuestro objetivo sin mayores cambios en la VM.
 	%\footnote{\url{https://winscp.net/eng/download.php}} 
 	% Poner el link estaría bueno, pero ponerlo genera muchos espacios por las imágenes. Si quieren veanlo cómo ponerlo
 	
@@ -306,6 +327,42 @@ Como primera parte de la respuesta obtuvimos ``\texttt{HTTP/1.1 200 OK}'', que i
 		\includegraphics[width=.8\linewidth]{Images/WinSCP/fig2}
 		\caption{Elegimos la sesi'on importada al abrir WinSCP}
 	\end{figure}
+
+	Una vez conectados correctamente, de haber elegido el estilo de la interfaz por defecto durante la instalaci'on, habr'an dos paneles en pantalla. En el izquierdo podremos navegar por el sistema de archivos de la computadora \emph{desde} la que nos conectamos, y en el derecho por el de la computadora \emph{a la cual} nos conectamos.
+	
+	\begin{figure}[H]
+		\centering \captionsetup{justification=centering}
+		\includegraphics[width=.8\linewidth]{Images/WinSCP/fig3}
+		\caption{Podemos ver los archivos de las m'aquinas a ambos extremos de la conexi'on}
+	\end{figure}
+
+	\subsubsection{Modificando la p'agina web}
+
+	La p'agina web que muestra Apache por defecto, que vimos en una secci'on anterior, se encuentra almacenada en la ruta \verb|/var/www/index.html| (por supuesto, en este caso, dentro de la VM). Por lo tanto, si queremos modificar los contenidos de dicha p'agina, los cambios a aplicar ser'an en principio, sobre el archivo en cuesti'on. Notar la extensi'on \texttt{.html}, que por convenci'on, determinar'ia que su contenido es c'odigo en el lenguaje HTML. De sus siglas en inglés, el \textit{HyperText Markup Language} es un lenguaje est'andar para la definici'on del contenido de una p'agina web. Es decir, si queremos hacer cambios sobre el archivo \texttt{index.html}, tendremos que respetar las pautas de este lenguaje para que nuestros cambios sean correctamente comprendidos por un navegador web. 
+	
+	El contenido original de \label{fig:index_orig_code}\texttt{index.html} se puede ver en la sección de Código utilizado. 
+	
+	Entonces, investigamos sobre el uso de HTML y confeccionamos un nuevo archivo \texttt{index.html} que transferiremos a la máquina virtual para cambiar lo que se visualiza en la p'agina web. Para ello, en WinSCP buscamos nuestro archivo dentro de la computadora de origen en el panel izquierdo, y en el panel derecho entramos a la ruta de \texttt{index.html} antes mencionada, y arrastramos el archivo a transferir de un panel al otro. Cuando nos pregunta si queremos sobreescribir un archivo existente aceptamos (pues los nombres son iguales), pero luego nos encontramos con un inconveniente:
+	
+	\begin{figure}[H]
+		\centering \captionsetup{justification=centering}
+		\includegraphics[width=.8\linewidth]{Images/WinSCP/fig4}
+		\caption{Error al querer transferir nuestro nuevo archivo \texttt{index.html} a \texttt{/var/www} en la VM}
+	\end{figure}
+
+	Resulta que el archivo generado por Apache, al haber sido este 'ultimo instalado con permisos de superusuario (\texttt{\emph{\textbf{sudo}} apt-get install...}), el due'no de tal archivo es el usuario \texttt{\emph{root}}, por lo que al acceder con WinSCP a trav'es de nuestro usuario, no tenemos permisos suficientes para ejercer cambios sobre \texttt{index.html} en la VM.
+	
+	Para solucionarlo, hacemos uso del comando \texttt{chown} que, como hemos visto en trabajos pr'acticos pasados, permite cambiar el ``due'no'' de un archivo. Y por supuesto, tendremos que hacerlo en combinaci'on con \texttt{sudo}, al ser el due'no original, \texttt{\emph{root}}. El comando final ser'ia entonces (y ya que tenemos abierta la terminal con PuTTY, lo ejecutaremos a trav'es de ella)  \verb|sudo chown nuestroUsuario /var/www/index.html|. De esta forma, al volver a intentar transferir el archivo, podemos hacerlo sin problemas.
+	
+	Entonces, ahora al acceder de nuevo a la direcci'on \texttt{localhost} desde el host, podemos efectivamente comprobar que nos muestra el \texttt{index.html} que hicimos, y funciona sin problemas.
+	
+	\begin{figure}[H]
+		\centering \captionsetup{justification=centering}
+		\includegraphics[width=.8\linewidth]{Images/WinSCP/fig5}
+		\caption{Vista de la p'agina web despu'es de haber transferido nuestro archivo \texttt{index.html} a la VM}
+	\end{figure}
+
+	Se puede encontrar el archivo  \label{fig:index_ours_code}\texttt{index.html} que hicimos tambi'en en la secci'on de C'odigo utilizado.
 		
 	\section{Comandos usados}
 		A continuaci'on se encuentran todos los comandos utilizados en este trabajo, correspondientes a las im'agenes presentadas.
@@ -393,7 +450,13 @@ Como primera parte de la respuesta obtuvimos ``\texttt{HTTP/1.1 200 OK}'', que i
 			\end{code-box}
 			\imagecaption{4}
 		\end{figure}
-
+	
+	\section{C'odigo utilizado}
+	
+	\lstset{style=HTML}
+	\lstinputlisting[language=HTML, title=\char91\ref{fig:index_orig_code}\char93\:{}Archivo original \texttt{index.html}]{Resources/WinSCP/index.html}
+	
+	\lstinputlisting[language=HTML, title=\char91\ref{fig:index_ours_code}\char93\:{}Nuestro nuevo archivo \texttt{index.html}]{Resources/WinSCP/index-ours.html}
 
 
 

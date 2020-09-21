@@ -1,0 +1,198 @@
+<html>
+<head>
+	<title>Formulario funcional</title>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet"> 
+	<style>
+		body {
+			margin: 15px;
+			font-family: 'Source Sans Pro', sans-serif;
+		}
+		h3 {
+			margin-bottom: 10px;
+		}
+		div.choose {
+			margin-left: 20px;
+		}
+		input[type="text"]:not(.inline) {
+			display: block;
+		}
+		input[type="text"].line {
+			background: transparent;
+    		border: none;
+    		border-bottom: 1px solid gray;
+		}
+		input[type="text"]:not(.line) {
+			border: 1px solid gray; border-radius: 4px; padding: 6px;
+		}
+		div.texts > * {
+			margin-bottom: 5pt;
+		}
+		button {
+			font-size: 12pt; background-color: #007bff; border: 1px solid #0058b6; border-radius: 4px; padding: 7pt; color: white;
+		  	transition-duration: 0.2s;
+		}
+
+		button:hover {
+		  	background-color: #0058b6;
+		}
+	</style>
+	<script>
+		function submitFunc() {
+			var x = document.getElementById("myForm");
+			var txt = "";
+			var CBTXT = ". \xBF\xA1C\xF3mo no le puede gustar Code::Blocks con lo que se traba!?\n";
+			txt += "Hola "+x.elements[0].value+" "+x.elements[1].value+" !!!\n";
+
+			var i, val = "0";
+ 			for (i = 2; i <= 5; i++) 
+    			if(x.elements[i].checked) {val = x.elements[i].value; break;}
+  			
+
+			if (val == "0") txt += "Veo que le gustan las computadoras, qu\xE9 bueno!\n";
+			else txt += "Ufa, \xA1no sabe nada de computadoras!\n";
+			txt += "Adem\xE1s veo que prefiere "; 
+
+			for (i = 6; i <= 12; i++) {
+				if (x.elements[i].checked) {val = x.elements[i].value; break;}
+			}
+
+			if (val == "-1") {txt += x.elements[13].value; txt += CBTXT;}
+			else {
+				txt += val;
+				if (val != "Code::Blocks")
+					txt += CBTXT;
+				else txt += ". \xA1VAMOS CODE::BLOCKS!\n";
+			}
+			if (x.elements[14].checked || x.elements[15].checked) txt += "Qu\xE9 bueno que duerma bien :)\n"
+			else if (x.elements[16].checked || x.elements[17].checked|| x.elements[18].checked) txt += "Le aconsejar\xEDa dormir m\xE1s.\n"
+			else txt += "QU\xC9 PERSONA CEBADA! DESCANSE YA!\n";
+
+			txt += "Y por \xFAltimo le cuento que se aprecia mucho que le guste " + x.elements[20].value;
+
+
+			alert(txt);
+		}
+	</script>
+</head>
+<body>
+	<h1>Formulario funcional</h1>
+	<p>
+		Complete el siguiente formulario con informaci&oacute;n no necesariamente real.
+	</p>
+
+	<form id="myForm">
+		<div>
+			<div class="texts">
+				<label for="name">Nombre:</label>
+				<input type="text" name="name" id="name">
+			</div>
+			<div>
+				<label for="surname">Apellido:</label>
+				<input type="text" name="surname" id="surname">
+			</div>
+		</div>
+
+		<div>
+			<h3>&#191;Le gustan las computadoras?</h3>
+			<div class="choose">
+				<div>
+					<input type="radio" name="like-pc" id="yeah" value="0" checked="checked">
+					<label for="yeah">Obvio</label>
+				</div>
+				<div>
+					<input type="radio" name="like-pc" id="yes" value="0">
+					<label for="yes">Seh</label>
+				</div>
+				<div>
+					<input type="radio" name="like-pc" id="whyNot" value="0">
+					<label for="whyNot">&#191;Por qu&eacute; no?</label>
+				</div>
+				<div>
+					<input type="radio" name="like-pc" id="negate" value="1">
+					<label for="negate">
+						<small><i>
+							Iba a decir que no pero es que no entiendo estos aparatos y no s&eacute; c&oacute;mo pude apretar este bot&oacute;n
+						</i></small>
+					</label>
+				</div>
+			</div>
+		</div>
+
+		<div>
+			<h3>&#191;IDE Preferido?</h3>
+			<div class="choose">
+				<div>
+					<input type="radio" name="ide" id="vim" value="Vim">
+					<label for="vim">Vim</label>
+				</div>
+				<div>
+					<input type="radio" name="ide" id="codeblocks" value="Code::Blocks" checked="checked">
+					<label for="codeblocks">Code::Blocks</label>
+				</div>
+				<div>
+					<input type="radio" name="ide" id="geany" value="Geany">
+					<label for="geany">Geany</label>
+				</div>
+				<div>
+					<input type="radio" name="ide" id="visualC" value="Visual C++">
+					<label for="visualC">Visual C++</label>
+				</div>
+				<div>
+					<input type="radio" name="ide" id="sublime" value="Sublime Text">
+					<label for="sublime">Sublime Text</label>
+				</div>
+				<div>
+					<input type="radio" name="ide" id="notepad" value="Notepad">
+					<label for="notepad">Notepad :'v</label>
+				</div>
+				<div>
+					<input type="radio" name="ide" id="other" value="-1">
+					<label for="other">Otro:</label>
+					<input class="inline line" type="text" name="ide_other" id="other-text">
+				</div>
+			</div>
+		</div>
+
+		<div>
+			<h3>&#191;Horas de sue&ntilde;o?</h3>
+			<div class="choose">
+				<div>
+					<input type="radio" name="sleep" id="ten" value="0">
+					<label for="ten">10hs</label>
+				</div>
+				<div>
+					<input type="radio" name="sleep" id="eight" value="1">
+					<label for="eight">8hs</label>
+				</div>
+				<div>
+					<input type="radio" name="sleep" id="six" value="2">
+					<label for="six">6hs</label>
+				</div>
+				<div>
+					<input type="radio" name="sleep" id="four" value="3">
+					<label for="four">4hs</label>
+				</div>
+				<div>
+					<input type="radio" name="sleep" id="two" value="4">
+					<label for="two">2hs</label>
+				</div>
+				<div>
+					<input type="radio" name="sleep" id="nopnope" value="5" checked="checked">
+					<label for="nopnope">Jaja qu&eacute; es eso</label>
+				</div>
+			</div>
+		</div>
+
+		<div>
+			<h3>&#191;Cosa preferida?</h3>
+			<div>
+				<input type="text" name="favThing" id="favThing" placeholder="LOS TRENES">
+			</div>
+		</div> <br/>
+
+		
+	</form>
+
+	<button onclick="submitFunc()">Enviar</button>
+</body>
+</html>

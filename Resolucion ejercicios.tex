@@ -306,21 +306,21 @@ Como primera parte de la respuesta obtuvimos ``\texttt{HTTP/1.1 200 OK}'', que i
 	
 	\subsubsection{Instalando y configurando WinSCP}
 	
-	WinSCP es un programa para Windows de c'odigo abierto que permite principalmente, la transferencia de archivos de forma remota. Soporta distintos protocolos para ello, como \texttt{FTP}, \texttt{SFTP}, \texttt{SCP}, entre otros. Este 'ultimo (de sus siglas en ingl'es, \textit{Secure Copy Protocol}), es un protocolo pr'acticamente obsoleto para la transferencia de archivos que, al igual que SFTP el cual mencionamos brevemente en la secci'on de PuTTY, est'a basado en el protocolo \texttt{SSH}. SFTP es mucho m'as completo que SCP, permitiendo comandos como renombrar archivos, eliminar, mover, entre otros, que permiten en general poder visualizar el sistema de archivos del sistema al que uno se conecte y manejarlo con mayor flexibilidad, mientras SCP simplemente es capaz de transferir archivos. Por esta raz'on, dado que ya hemos configurado una conexi'on por SSH correctamente, podremos lograr nuestro objetivo sin mayores cambios en la VM, haciendo uso por comodidad del protocolo m'as moderno, SFTP.
+	WinSCP es un programa para Windows de c'odigo abierto que permite principalmente, la transferencia de archivos de forma remota. Soporta distintos protocolos para ello, como \texttt{FTP}, \texttt{SFTP}, \texttt{SCP}, entre otros. Este 'ultimo (de sus siglas en ingl'es, \textit{Secure Copy Protocol}), es un protocolo pr'acticamente obsoleto para la transferencia de archivos que, al igual que SFTP el cual mencionamos brevemente en la secci'on de puTTY, est'a basado en el protocolo \texttt{SSH}. SFTP es mucho m'as completo que SCP, permitiendo comandos como renombrar archivos, eliminar, mover, entre otros, que permiten en general poder visualizar el sistema de archivos del sistema al que uno se conecte y manejarlo con mayor flexibilidad, mientras SCP simplemente es capaz de transferir archivos. Por esta raz'on, dado que ya hemos configurado una conexi'on por SSH correctamente, podremos lograr nuestro objetivo sin mayores cambios en la VM, haciendo uso por comodidad del protocolo m'as moderno, SFTP.
 	%\footnote{\url{https://winscp.net/eng/download.php}} 
 	% Poner el link estaría bueno, pero ponerlo genera muchos espacios por las imágenes. Si quieren veanlo cómo ponerlo
 	
-	Entonces, descargamos el programa desde la p'agina oficial y lo instalamos. Durante el proceso de instalaci'on probablemente surja un cuadro inform'andonos de la existencia de sesiones guardadas con PuTTY:
+	Entonces, descargamos el programa desde la p'agina oficial y lo instalamos. Durante el proceso de instalaci'on probablemente surja un cuadro inform'andonos de la existencia de sesiones guardadas con puTTY:
 	
 	\begin{figure}[H]
 		\centering	\captionsetup{justification=centering}
 		\subfloat[Sesiones guardadas detectadas]{\includegraphics[width=.475\linewidth]{Images/WinSCP/fig1a}}
 		\hfill
 		\subfloat[Selecci'on de sesiones a importar]{\includegraphics[width=.475\linewidth]{Images/WinSCP/fig1b}} \vspace{7pt}
-		\caption{Importaci'on de sesiones guardadas desde PuTTY}
+		\caption{Importaci'on de sesiones guardadas desde puTTY}
 	\end{figure}
 
-	El instalador de WinSCP detecta y permite importar sesiones guardadas previamente en PuTTY. Esto nos facilita a'un m'as el proceso de configuraci'on, ya que no es necesario indicar nuevamente el puerto, la direcci'on, o la ruta de la llave privada como tuvimos que hacerlo con PuTTY, pues justamente utilizamos las opciones previamente establecidas en dicha ocasi'on, a lo que aceptamos e importamos la sesi'on relacionada a la conexi'on con la VM.
+	El instalador de WinSCP detecta y permite importar sesiones guardadas previamente en puTTY. Esto nos facilita a'un m'as el proceso de configuraci'on, ya que no es necesario indicar nuevamente el puerto, la direcci'on, o la ruta de la llave privada como tuvimos que hacerlo con puTTY, pues justamente utilizamos las opciones previamente establecidas en dicha ocasi'on, a lo que aceptamos e importamos la sesi'on relacionada a la conexi'on con la VM.
 	
 	Una vez finalizada la instalaci'on, abrimos el programa en cuesti'on, y al ingresar nos pedir'a los datos de conexi'on, pero tambi'en se encuentra listada la sesi'on antes importada, que utilizamos y procedemos a conectarnos a la VM (obviamente prendida).
 	
@@ -354,7 +354,7 @@ Como primera parte de la respuesta obtuvimos ``\texttt{HTTP/1.1 200 OK}'', que i
 
 	Resulta que el archivo generado por Apache, al haber sido este 'ultimo instalado con permisos de superusuario (\texttt{\emph{\textbf{sudo}} apt-get install...}), el due'no de tal archivo es el usuario \texttt{\emph{root}}, por lo que al acceder con WinSCP a trav'es de nuestro usuario, no tenemos permisos suficientes para ejercer cambios sobre \texttt{index.html} en la VM.
 	
-	Para solucionarlo, hacemos uso del comando \texttt{chown} que, como hemos visto en trabajos pr'acticos pasados, permite cambiar el ``due'no'' de un archivo. Y por supuesto, tendremos que hacerlo en combinaci'on con \texttt{sudo}, al ser el due'no original, \texttt{\emph{root}}. El comando final ser'ia entonces (y ya que tenemos abierta la terminal con PuTTY, lo ejecutaremos a trav'es de ella)  \verb|sudo chown nuestroUsuario /var/www/index.html|. De esta forma, al volver a intentar transferir el archivo, podemos hacerlo sin problemas.
+	Para solucionarlo, hacemos uso del comando \texttt{chown} que, como hemos visto en trabajos pr'acticos pasados, permite cambiar el ``due'no'' de un archivo. Y por supuesto, tendremos que hacerlo en combinaci'on con \texttt{sudo}, al ser el due'no original, \texttt{\emph{root}}. El comando final ser'ia entonces (y ya que tenemos abierta la terminal con puTTY, lo ejecutaremos a trav'es de ella)  \verb|sudo chown nuestroUsuario /var/www/index.html|. De esta forma, al volver a intentar transferir el archivo, podemos hacerlo sin problemas.
 	
 	\begin{figure}[H]
 		\centering \captionsetup{justification=centering}
